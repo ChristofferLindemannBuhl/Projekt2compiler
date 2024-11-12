@@ -141,7 +141,6 @@ class Update extends AST{
 */
 
 class Trace extends AST{
-    // Example Signal = 0101010
     String signal;
     Boolean[] values;
     Trace(String signal, Boolean[] values){
@@ -244,7 +243,7 @@ class Circuit extends AST {
         
     }
 
-    void nextCycle(Environment env, int cycle) {
+    private void nextCycle(Environment env, int cycle) {
         // Step 1: Update input signals based on cycle number
         for (String input : inputs) {
             Trace trace = findTrace(input);
@@ -273,7 +272,7 @@ class Circuit extends AST {
     }
 
     // New method to run the simulator
-    void runSimulator(Environment env) {
+    public void runSimulator(Environment env) {
         // First initialize the environment
         initialize(env);
 
@@ -303,7 +302,7 @@ class Circuit extends AST {
         return null; // Not found
     }
 
-    void latchesInit(Environment env) {
+    private void latchesInit(Environment env) {
         // Initialize all latch outputs (e.g., A', B', C') to 0
         for (String latch : latches) {
             String latchOutput = latch + "'";  // Append prime to denote latch output
