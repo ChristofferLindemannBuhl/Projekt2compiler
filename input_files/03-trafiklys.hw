@@ -16,7 +16,7 @@ Green  = /Red * /Yel
 PGreen = Red * /Yel
 PRed   = /PGreen
 
-siminputs: Button = 001001111001
+siminputs: Button=001001111001
 
 /*
 

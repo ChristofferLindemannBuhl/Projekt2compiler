@@ -14,7 +14,7 @@ Green  = /Red
 PGreen = Red 
 PRed   = /PGreen
 
-siminputs: Button = 1100110111
+siminputs: Button=1100110111
 
 /* The simulator output should look something like this:
 
