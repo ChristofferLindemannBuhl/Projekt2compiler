@@ -1,12 +1,12 @@
-import java.util.HashMap;
-import java.util.Map.Entry;
+package hdl0_compiler;
+
 import java.util.List;
 import java.util.ArrayList;
 
 public abstract class AST{
     public void error(String msg){
-	System.err.println(msg);
-	System.exit(-1);
+        System.err.println(msg);
+        System.exit(-1);
     }
 };
 
@@ -22,7 +22,7 @@ abstract class Expr extends AST{
 }
 
 class Conjunction extends Expr{
-    // Example: Signal1 * Signal2 
+    // Example: Signal1 * Signal2
     Expr e1,e2;
     Conjunction(Expr e1,Expr e2){this.e1=e1; this.e2=e2;}
 
@@ -33,7 +33,7 @@ class Conjunction extends Expr{
 }
 
 class Disjunction extends Expr{
-    // Example: Signal1 + Signal2 
+    // Example: Signal1 + Signal2
     Expr e1,e2;
     Disjunction(Expr e1,Expr e2){this.e1=e1; this.e2=e2;}
 
@@ -112,7 +112,7 @@ class Def extends AST{
     List<String> args;  // formal arguments, e.g. [A,B]
     Expr e;  // body of the definition, e.g. A * /B + /A * B
     Def(String f, List<String> args, Expr e){
-	this.f=f; this.args=args; this.e=e;
+        this.f=f; this.args=args; this.e=e;
     }
 }
 
@@ -120,7 +120,7 @@ class Def extends AST{
 // in the update section
 
 class Update extends AST{
-    // Example Signal1 = /Signal2 
+    // Example Signal1 = /Signal2
     String name;  // Signal being updated, e.g. "Signal1"
     Expr e;  // The value it receives, e.g., "/Signal2"
     Update(String name, Expr e){
@@ -144,8 +144,8 @@ class Trace extends AST{
     String signal;
     Boolean[] values;
     Trace(String signal, Boolean[] values){
-	this.signal=signal;
-	this.values=values;
+        this.signal=signal;
+        this.values=values;
     }
 
     @Override
@@ -153,7 +153,7 @@ class Trace extends AST{
         StringBuilder sb = new StringBuilder();
         for (Boolean value : values) {
             sb.append(value != null ? (value ? "1" : "0") : "NULL"); // Default to "NULL" if value is null
-        }        
+        }
         sb.append(" ").append(signal);
         return sb.toString();
     }
@@ -162,12 +162,12 @@ class Trace extends AST{
 /* The main data structure of this simulator: the entire circuit with
    its inputs, outputs, latches, definitions and updates. Additionally
    for each input signal, it has a Trace as simulation input.
-   
+
    There are two variables that are not part of the abstract syntax
    and thus not initialized by the constructor (so far): simoutputs
    and simlength. It is suggested to use these two variables for
-   assignment 2 as follows: 
- 
+   assignment 2 as follows:
+
    1. all siminputs should have the same length (this is part of the
    checks that you should implement). set simlength to this length: it
    is the number of simulation cycles that the interpreter should run.
@@ -240,7 +240,7 @@ class Circuit extends AST {
             Boolean outputValue = env.getVariable(outputSignal); // Evaluate output signal at cycle 0
             simoutputs.get(i).values[0] = outputValue;  // Set value for time point 0
         }
-        
+
     }
 
     private void nextCycle(Environment env, int cycle) {
