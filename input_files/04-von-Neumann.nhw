@@ -37,8 +37,7 @@ ma3 = mux(a3,s3,Read)
 //ma2 = Read a2 + /Read s2
 //ma3 = Read a3 + /Read s3
 
-zero = b0/b0 // trick to generate constant 0
-mb0 = mux(b0,zero,Read)
+mb0 = mux(b0, 0,Read)
 mb1 = mux(b1,c0,Read)
 mb2 = mux(b2,c1,Read)
 mb3 = mux(b3,c2,Read)
@@ -49,13 +48,13 @@ mb3 = mux(b3,c2,Read)
 //mb3 = Read b3 + /Read c2
 
 siminputs:
-Read=100000000
-  a0=100000000
-  a1=000000000
-  a2=000000000
-  a3=000000000
-  b0=100000000
-  b1=100000000
-  b2=100000000
-  b3=000000000
+Read = 100000000
+  a0 = 100000000
+  a1 = 000000000
+  a2 = 000000000
+  a3 = 000000000
+  b0 = 100000000
+  b1 = 100000000
+  b2 = 100000000
+  b3 = 000000000
   

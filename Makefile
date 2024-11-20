@@ -1,34 +1,71 @@
-##### If you have not installed ANTLR in your classpath, you still need to copy antlr-4.13.0-complete.jar to this folder and set up the classpath option:
+# Variables
+GRAMMAR := hw.g4
 
-#classpathoption = -cp 'antlr-4.13.2-complete.jar:.'  # if you are using mac/linux
-classpathoption = -cp 'antlr-4.13.2-complete.jar;.'  # if you are using windows
+PROJECT_FILES_DIR := hdl0_compiler
+INPUT_FILES_DIR := input_files
 
-#classpathoption =   # nothing if already installed
+ANTLR_JAR := antlr-4.13.2-complete.jar
+PROJECT_OUT_DIR := out/hdl0_compiler
+ANTLR_OUT_DIR := $(PROJECT_FILES_DIR)/antlr_generated_sources
 
+# Ensure the ANTLR output directory exists
+$(shell mkdir -p $(ANTLR_OUT_DIR))
+$(shell mkdir -p $(PROJECT_OUT_DIR)/antlr_generated_sources)
 
-antlr4 = java $(classpathoption) org.antlr.v4.Tool
-grun   = java $(classpathoption) org.antlr.v4.gui.TestRig
-SRCFILES  = main.java Environment.java AST.java
-GENERATED = hwLexer.java hwParser.java hwBaseVisitor.java hwVisitor.java hwBaseListener.java hwListener.java
+# List of ANTLR Java files to be generated
+ANTLR_JAVA_FILES := $(ANTLR_OUT_DIR)/ccBaseListener.java \
+                    $(ANTLR_OUT_DIR)/ccBaseVisitor.java \
+                    $(ANTLR_OUT_DIR)/ccLexer.java \
+                    $(ANTLR_OUT_DIR)/ccListener.java \
+                    $(ANTLR_OUT_DIR)/ccParser.java \
+                    $(ANTLR_OUT_DIR)/ccVisitor.java
 
-all:	
-	make run
+# Command to run ANTLR
+ANTLR4 := java -cp $(ANTLR_JAR) org.antlr.v4.Tool
 
-hwLexer.java:	hw.g4
-	$(antlr4) -visitor hw.g4
+# Classpath variables
+ANTLR_CLASSPATH = $(ANTLR_OUT_DIR):.
+PROJECT_CLASSPATH = $(PROJECT_OUT_DIR):.
 
-main.class:	$(SRCFILES) $(GENERATED)
-	javac $(classpathoption) $(SRCFILES) $(GENERATED) 
+.PHONY: clean all
 
-run:	main.class
-	java $(classpathoption) main 01-hello-world.hw  > 01.html
-	java $(classpathoption) main 01b-hello-world-withdef.hw  > 01b.html
-	java $(classpathoption) main 02-trafiklys-minimal.hw  > 02.html
-	java $(classpathoption) main 03-trafiklys.hw  > 03.html
-	java $(classpathoption) main 04-von-Neumann.hw  > 04.html
+# Clean and build
 
-grun:	hwLexer.class hwParser.class 01-hello-world.hw
-	$(grun) impl start -gui -tokens 01-hello-world.hw
+all: clean generate_parser add_package compile_antlr_generated compile_project run
 
+# Clean target to remove generated files without deleting the directories
 clean:
-	rm $(GENERATED) *.class hw.interp hwLexer.interp hwLexer.tokens hw.tokens *.html
+	@echo "Cleaning up generated files..."
+	@rm -rf out/*  									# Remove output files in directory 'out'
+	@rm -rf hdl0_compiler/antlr_generated_sources/*	# Remove generated antlr java files in directory 'hdl0_compiler/antlr_generated_sources'
+	@rm -rf html_output/* 							# Remove html output in directory 'html_output'
+
+# Rule to generate parser files from grammar
+generate_parser:
+	@echo "Generating parser files from $(GRAMMAR) in $(ANTLR_OUT_DIR)..."
+	$(ANTLR4) -visitor -o $(ANTLR_OUT_DIR) $(GRAMMAR)
+
+# Add package name to generated ANTLR .java files
+add_package:
+	@echo "Adding package name to ANTLR .java files..."
+	@./add_package.sh
+
+# Target to compile ANTLR-generated Java files
+compile_antlr_generated:
+	@echo "Compiling ANTLR-generated Java files to class files in $(PROJECT_OUT_DIR)/antlr_generated_sources..."
+	@javac -cp "$(ANTLR_JAR):$(ANTLR_CLASSPATH)" $(ANTLR_OUT_DIR)/*.java -d out
+
+# Rule to compile Main project Java files into class files
+compile_project: compile_antlr_generated
+	@echo "Compiling main project Java files..."
+	@javac -cp "$(ANTLR_JAR):$(ANTLR_CLASSPATH):$(PROJECT_OUT_DIR)/antlr_generated_sources" $(PROJECT_FILES_DIR)/*.java -d out
+
+# Rule to run Main class with input files
+run:
+	@echo "Starting processing of .hw files in $(INPUT_FILES_DIR)..."
+	@for file in $(INPUT_FILES_DIR)/*.hw; do \
+        echo "Processing input file: $$file"; \
+        if ! java -cp "$(ANTLR_JAR):out" hdl0_compiler.Main $$file; then \
+            echo "Error processing $$file"; \
+        fi; \
+    done

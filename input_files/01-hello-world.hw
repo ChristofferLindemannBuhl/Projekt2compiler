@@ -10,5 +10,5 @@ updates:
 Oscillator = /Oscillator' /Reset
 
 siminputs:
-Reset=0000100
+Reset = 0000100
 

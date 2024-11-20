@@ -1,12 +1,12 @@
-import java.util.HashMap;
-import java.util.Map.Entry;
+package hdl0_compiler;
+
 import java.util.List;
 import java.util.ArrayList;
 
-public abstract class AST{
-    public void error(String msg){
-	System.err.println(msg);
-	System.exit(-1);
+public abstract class AST {
+    public void error(String msg) {
+        System.err.println(msg);
+        System.exit(-1);
     }
 };
 
@@ -17,39 +17,39 @@ public abstract class AST{
    (Negation). Moreover, an expression can be using any of the
    functions defined in the definitions. */
 
-abstract class Expr extends AST{
+abstract class Expr extends AST {
     public abstract Boolean eval(Environment env);
 }
 
-class Conjunction extends Expr{
-    // Example: Signal1 * Signal2 
+class Conjunction extends Expr {
+    // Example: Signal1 * Signal2
     Expr e1,e2;
-    Conjunction(Expr e1,Expr e2){this.e1=e1; this.e2=e2;}
+    Conjunction(Expr e1,Expr e2) {this.e1 = e1; this.e2 = e2;}
 
     @Override
-    public Boolean eval(Environment env){
+    public Boolean eval(Environment env) {
         return e1.eval(env) && e2.eval(env);
     }
 }
 
-class Disjunction extends Expr{
-    // Example: Signal1 + Signal2 
+class Disjunction extends Expr {
+    // Example: Signal1 + Signal2
     Expr e1,e2;
-    Disjunction(Expr e1,Expr e2){this.e1=e1; this.e2=e2;}
+    Disjunction(Expr e1,Expr e2) {this.e1 = e1; this.e2 = e2;}
 
     @Override
-    public Boolean eval(Environment env){
+    public Boolean eval(Environment env) {
         return e1.eval(env) || e2.eval(env);
     }
 }
 
-class Negation extends Expr{
+class Negation extends Expr {
     // Example: /Signal
     Expr e;
-    Negation(Expr e){this.e=e;}
+    Negation(Expr e) {this.e = e;}
 
     @Override
-    public Boolean eval(Environment env){
+    public Boolean eval(Environment env) {
         return !e.eval(env);
     }
 }
@@ -93,39 +93,39 @@ class UseDef extends Expr {
 }
 
 
-class Signal extends Expr{
-    String varname; // a signal is just identified by a name
-    Signal(String varname){
-        this.varname=varname;
+class Signal extends Expr {
+    String varName; // a signal is just identified by a name
+    Signal(String varName) {
+        this.varName = varName;
     }
 
     @Override
     public Boolean eval(Environment env) {
-        return env.getVariable(varname);
+        return env.getVariable(varName);
     }
 }
 
-class Def extends AST{
+class Def extends AST {
     // Definition of a function
     // Example: def xor(A,B) = A * /B + /A * B
     String f; // function name, e.g. "xor"
     List<String> args;  // formal arguments, e.g. [A,B]
     Expr e;  // body of the definition, e.g. A * /B + /A * B
-    Def(String f, List<String> args, Expr e){
-	this.f=f; this.args=args; this.e=e;
+    Def(String f, List<String> args, Expr e) {
+        this.f = f; this.args = args; this.e = e;
     }
 }
 
 // An Update is any of the lines " signal = expression "
 // in the update section
 
-class Update extends AST{
-    // Example Signal1 = /Signal2 
+class Update extends AST {
+    // Example Signal1 = /Signal2
     String name;  // Signal being updated, e.g. "Signal1"
     Expr e;  // The value it receives, e.g., "/Signal2"
-    Update(String name, Expr e){
-        this.e=e;
-        this.name=name;
+    Update(String name, Expr e) {
+        this.e = e;
+        this.name = name;
     }
 
     public void eval(Environment env) {
@@ -140,12 +140,12 @@ class Update extends AST{
    assignment.
 */
 
-class Trace extends AST{
+class Trace extends AST {
     String signal;
     Boolean[] values;
-    Trace(String signal, Boolean[] values){
-	this.signal=signal;
-	this.values=values;
+    Trace(String signal, Boolean[] values) {
+        this.signal = signal;
+        this.values = values;
     }
 
     @Override
@@ -153,28 +153,28 @@ class Trace extends AST{
         StringBuilder sb = new StringBuilder();
         for (Boolean value : values) {
             sb.append(value != null ? (value ? "1" : "0") : "NULL"); // Default to "NULL" if value is null
-        }        
+        }
         sb.append(" ").append(signal);
         return sb.toString();
     }
 }
 
-/* The main data structure of this simulator: the entire circuit with
-   its inputs, outputs, latches, definitions and updates. Additionally
+/* The Main data structure of this simulator: the entire circuit with
+   its inputs, outputs, latches, definitions and updates. Additionally,
    for each input signal, it has a Trace as simulation input.
-   
+
    There are two variables that are not part of the abstract syntax
-   and thus not initialized by the constructor (so far): simoutputs
-   and simlength. It is suggested to use these two variables for
-   assignment 2 as follows: 
- 
-   1. all siminputs should have the same length (this is part of the
-   checks that you should implement). set simlength to this length: it
+   and thus not initialized by the constructor (so far): simOutputs
+   and simLength. It is suggested to use these two variables for
+   assignment 2 as follows:
+
+   1. all simInputs should have the same length (this is part of the
+   checks that you should implement). set simLength to this length: it
    is the number of simulation cycles that the interpreter should run.
 
-   2. use the simoutputs to store the value of the output signals in
+   2. use the simOutputs to store the value of the output signals in
    each simulation cycle, so they can be displayed at the end. These
-   traces should also finally have the length simlength.
+   traces should also finally have the length simLength.
 */
 
 
@@ -185,9 +185,9 @@ class Circuit extends AST {
     List<String> latches;
     List<Def> definitions;
     List<Update> updates;
-    List<Trace> siminputs;
-    List<Trace> simoutputs;
-    int simlength;
+    List<Trace> simInputs;
+    List<Trace> simOutputs;
+    int simLength;
 
     Circuit(String name,
             List<String> inputs,
@@ -195,24 +195,24 @@ class Circuit extends AST {
             List<String> latches,
             List<Def> definitions,
             List<Update> updates,
-            List<Trace> siminputs) {
+            List<Trace> simInputs) {
         this.name = name;
         this.inputs = inputs;
         this.outputs = outputs;
         this.latches = latches;
         this.definitions = definitions;
         this.updates = updates;
-        this.siminputs = siminputs;
+        this.simInputs = simInputs;
 
-        // Initialize simlength based on siminputs
-        if (!siminputs.isEmpty()) {
-            simlength = siminputs.get(0).values.length; // Assuming all traces have the same length
+        // Initialize simLength based on simInputs
+        if (!simInputs.isEmpty()) {
+            simLength = simInputs.getFirst().values.length; // Assuming all traces have the same length
         }
 
-        // Initialize simoutputs with traces for output signals
-        simoutputs = new ArrayList<>();
+        // Initialize simOutputs with traces for output signals
+        simOutputs = new ArrayList<>();
         for (String output : outputs) {
-            simoutputs.add(new Trace(output, new Boolean[simlength])); // Placeholder for output traces
+            simOutputs.add(new Trace(output, new Boolean[simLength])); // Placeholder for output traces
         }
     }
 
@@ -221,8 +221,9 @@ class Circuit extends AST {
         for (String input : inputs) {
             Trace trace = findTrace(input);
             if (trace == null || trace.values.length == 0) {
-                error("Siminput not defined or has length 0 for input signal: " + input);
+                error("SimInput not defined or has length 0 for input signal: " + input);
             }
+            assert trace != null;
             env.setVariable(input, trace.values[0]);  // Set initial value for time point 0
         }
 
@@ -238,9 +239,8 @@ class Circuit extends AST {
         for (int i = 0; i < outputs.size(); i++) {
             String outputSignal = outputs.get(i);
             Boolean outputValue = env.getVariable(outputSignal); // Evaluate output signal at cycle 0
-            simoutputs.get(i).values[0] = outputValue;  // Set value for time point 0
+            simOutputs.get(i).values[0] = outputValue;  // Set value for time point 0
         }
-        
     }
 
     private void nextCycle(Environment env, int cycle) {
@@ -248,8 +248,9 @@ class Circuit extends AST {
         for (String input : inputs) {
             Trace trace = findTrace(input);
             if (trace == null || cycle >= trace.values.length) {
-                error("Siminput not defined for input signal: " + input + " at cycle " + cycle);
+                error("SimInput not defined for input signal: " + input + " at cycle " + cycle);
             }
+            assert trace != null;
             env.setVariable(input, trace.values[cycle]);  // Update input for the current cycle
         }
 
@@ -261,14 +262,12 @@ class Circuit extends AST {
             update.eval(env);  // Run eval method of each Update
         }
 
-        // Step 4: Update output signals and store in simoutputs for the current cycle
+        // Step 4: Update output signals and store in simOutputs for the current cycle
         for (int i = 0; i < outputs.size(); i++) {
             String outputSignal = outputs.get(i);
             Boolean outputValue = env.getVariable(outputSignal); // Evaluate output signal for current cycle
-            simoutputs.get(i).values[cycle] = outputValue;  // Store the value in simoutputs
+            simOutputs.get(i).values[cycle] = outputValue;  // Store the value in simOutputs
         }
-
-
     }
 
     // New method to run the simulator
@@ -276,25 +275,29 @@ class Circuit extends AST {
         // First initialize the environment
         initialize(env);
 
-        // Then run nextCycle for each cycle up to simlength
-        for (int cycle = 1; cycle < simlength; cycle++) {
+        // Then run nextCycle for each cycle up to simLength
+        for (int cycle = 1; cycle < simLength; cycle++) {
             nextCycle(env, cycle);  // Cycle starts from 0 in initialize, so we start from 1 here
         }
 
-        // Print all siminputs
-        for (Trace trace : siminputs) {
+        // Print all simInputs
+        System.err.println("|| Simulation input ||");
+        for (Trace trace : simInputs) {
             System.out.println(trace);
         }
 
-        // Print all simoutputs at the end
-        for (Trace trace : simoutputs) {
+        System.out.println();
+
+        // Print all simOutputs at the end
+        System.err.println("|| Simulation output ||");
+        for (Trace trace : simOutputs) {
             System.out.println(trace);
         }
     }
 
     // Helper function to find a Trace by signal name
     private Trace findTrace(String signalName) {
-        for (Trace trace : siminputs) {
+        for (Trace trace : simInputs) {
             if (trace.signal.equals(signalName)) {
                 return trace;
             }
