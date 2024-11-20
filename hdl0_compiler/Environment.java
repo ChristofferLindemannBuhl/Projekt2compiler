@@ -26,6 +26,7 @@ class Environment {
             defs.put(d.f,d);
     }
 
+
     // This constructor can be used during eval to create a new
     // environment with the same definitions contained in an existing
     // one:
