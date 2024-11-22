@@ -1,10 +1,10 @@
 package hdl0_compiler;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
-public abstract class AST{
-    public void error(String msg){
+public abstract class AST {
+    public void error(String msg) {
         System.err.println(msg);
         System.exit(-1);
     }
@@ -17,39 +17,50 @@ public abstract class AST{
    (Negation). Moreover, an expression can be using any of the
    functions defined in the definitions. */
 
-abstract class Expr extends AST{
+abstract class Expr extends AST {
     public abstract Boolean eval(Environment env);
 }
 
-class Conjunction extends Expr{
+class Conjunction extends Expr {
     // Example: Signal1 * Signal2
-    Expr e1,e2;
-    Conjunction(Expr e1,Expr e2){this.e1=e1; this.e2=e2;}
+    Expr e1, e2;
+
+    Conjunction(Expr e1, Expr e2) {
+        this.e1 = e1;
+        this.e2 = e2;
+    }
 
     @Override
-    public Boolean eval(Environment env){
+    public Boolean eval(Environment env) {
         return e1.eval(env) && e2.eval(env);
     }
 }
 
-class Disjunction extends Expr{
+class Disjunction extends Expr {
     // Example: Signal1 + Signal2
-    Expr e1,e2;
-    Disjunction(Expr e1,Expr e2){this.e1=e1; this.e2=e2;}
+    Expr e1, e2;
+
+    Disjunction(Expr e1, Expr e2) {
+        this.e1 = e1;
+        this.e2 = e2;
+    }
 
     @Override
-    public Boolean eval(Environment env){
+    public Boolean eval(Environment env) {
         return e1.eval(env) || e2.eval(env);
     }
 }
 
-class Negation extends Expr{
+class Negation extends Expr {
     // Example: /Signal
     Expr e;
-    Negation(Expr e){this.e=e;}
+
+    Negation(Expr e) {
+        this.e = e;
+    }
 
     @Override
-    public Boolean eval(Environment env){
+    public Boolean eval(Environment env) {
         return !e.eval(env);
     }
 }
@@ -60,7 +71,7 @@ class UseDef extends Expr {
     List<Expr> args;
 
     UseDef(String f, List<Expr> args) {
-        this.f = f;
+        this.f    = f;
         this.args = args;
     }
 
@@ -92,40 +103,43 @@ class UseDef extends Expr {
     }
 }
 
+class Signal extends Expr {
+    String varName; // a signal is just identified by a name
 
-class Signal extends Expr{
-    String varname; // a signal is just identified by a name
-    Signal(String varname){
-        this.varname=varname;
+    Signal(String varName) {
+        this.varName = varName;
     }
 
     @Override
     public Boolean eval(Environment env) {
-        return env.getVariable(varname);
+        return env.getVariable(varName);
     }
 }
 
-class Def extends AST{
+class Def extends AST {
     // Definition of a function
     // Example: def xor(A,B) = A * /B + /A * B
     String f; // function name, e.g. "xor"
     List<String> args;  // formal arguments, e.g. [A,B]
     Expr e;  // body of the definition, e.g. A * /B + /A * B
-    Def(String f, List<String> args, Expr e){
-        this.f=f; this.args=args; this.e=e;
+
+    Def(String f, List<String> args, Expr e) {
+        this.f    = f;
+        this.args = args;
+        this.e    = e;
     }
 }
 
 // An Update is any of the lines " signal = expression "
 // in the update section
-
-class Update extends AST{
+class Update extends AST {
     // Example Signal1 = /Signal2
     String name;  // Signal being updated, e.g. "Signal1"
     Expr e;  // The value it receives, e.g., "/Signal2"
-    Update(String name, Expr e){
-        this.e=e;
-        this.name=name;
+
+    Update(String name, Expr e) {
+        this.e    = e;
+        this.name = name;
     }
 
     public void eval(Environment env) {
@@ -140,12 +154,13 @@ class Update extends AST{
    assignment.
 */
 
-class Trace extends AST{
+class Trace extends AST {
     String signal;
     Boolean[] values;
-    Trace(String signal, Boolean[] values){
-        this.signal=signal;
-        this.values=values;
+
+    Trace(String signal, Boolean[] values) {
+        this.signal = signal;
+        this.values = values;
     }
 
     @Override
@@ -177,7 +192,6 @@ class Trace extends AST{
    traces should also finally have the length simlength.
 */
 
-
 class Circuit extends AST {
     String name;
     List<String> inputs;
@@ -189,24 +203,26 @@ class Circuit extends AST {
     List<Trace> simoutputs;
     int simlength;
 
-    Circuit(String name,
+    Circuit(
+            String name,
             List<String> inputs,
             List<String> outputs,
             List<String> latches,
             List<Def> definitions,
             List<Update> updates,
-            List<Trace> siminputs) {
-        this.name = name;
-        this.inputs = inputs;
-        this.outputs = outputs;
-        this.latches = latches;
+            List<Trace> siminputs
+    ) {
+        this.name        = name;
+        this.inputs      = inputs;
+        this.outputs     = outputs;
+        this.latches     = latches;
         this.definitions = definitions;
-        this.updates = updates;
-        this.siminputs = siminputs;
+        this.updates     = updates;
+        this.siminputs   = siminputs;
 
         // Initialize simlength based on siminputs
         if (!siminputs.isEmpty()) {
-            simlength = siminputs.get(0).values.length; // Assuming all traces have the same length
+            simlength = siminputs.getFirst().values.length; // Assuming all traces have the same length
         }
 
         // Initialize simoutputs with traces for output signals
@@ -223,6 +239,7 @@ class Circuit extends AST {
             if (trace == null || trace.values.length == 0) {
                 error("Siminput not defined or has length 0 for input signal: " + input);
             }
+            assert trace != null;
             env.setVariable(input, trace.values[0]);  // Set initial value for time point 0
         }
 
@@ -240,7 +257,6 @@ class Circuit extends AST {
             Boolean outputValue = env.getVariable(outputSignal); // Evaluate output signal at cycle 0
             simoutputs.get(i).values[0] = outputValue;  // Set value for time point 0
         }
-
     }
 
     private void nextCycle(Environment env, int cycle) {
@@ -267,8 +283,6 @@ class Circuit extends AST {
             Boolean outputValue = env.getVariable(outputSignal); // Evaluate output signal for current cycle
             simoutputs.get(i).values[cycle] = outputValue;  // Store the value in simoutputs
         }
-
-
     }
 
     // New method to run the simulator

@@ -4,14 +4,30 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1e4e3de1-eddd-468c-b51e-771e562558da" name="Changes" comment="Fix dependencies in Makefile" />
+    <list default="true" id="1e4e3de1-eddd-468c-b51e-771e562558da" name="Changes" comment="Fix dependencies in Makefile">
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hdl0_compiler/AST.java" beforeDir="false" afterPath="$PROJECT_DIR$/hdl0_compiler/AST.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hdl0_compiler/Environment.java" beforeDir="false" afterPath="$PROJECT_DIR$/hdl0_compiler/Environment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hdl0_compiler/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/hdl0_compiler/Main.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="jar://$USER_HOME$/.jdks/openjdk-23.0.1/lib/src.zip!/java.base/java/util/List.java" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="OptimizeOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -24,13 +40,19 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "refactor",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/KodeProjekter/flutter-app",
     "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.stylelint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.stylelint": "",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "rearrange.code.on.save": "true",
+    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors.Java",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -51,6 +73,13 @@
       <option name="presentableId" value="Default" />
       <updated>1732134593817</updated>
       <workItem from="1732134594979" duration="2032000" />
+      <workItem from="1732183861890" duration="449000" />
+      <workItem from="1732282869373" duration="1949000" />
+      <workItem from="1732285073898" duration="1253000" />
+      <workItem from="1732286348121" duration="408000" />
+      <workItem from="1732286769653" duration="60000" />
+      <workItem from="1732286836686" duration="377000" />
+      <workItem from="1732287225106" duration="11900000" />
     </task>
     <servers />
   </component>
@@ -60,5 +89,9 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Fix dependencies in Makefile" />
     <option name="LAST_COMMIT_MESSAGE" value="Fix dependencies in Makefile" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
